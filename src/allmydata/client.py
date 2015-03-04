@@ -164,6 +164,7 @@ class Client(node.Node, pollmixin.PollMixin):
 
         # this needs to happen last, so it can use getServiceNamed() to
         # acquire references to StorageServer and other web-statusable things
+        
         webport = self.get_config("node", "web.port", None)
         if webport:
             self.init_web(webport) # strports string
@@ -448,6 +449,11 @@ class Client(node.Node, pollmixin.PollMixin):
 
     def init_web(self, webport):
         self.log("init_web(webport=%s)", args=(webport,))
+        web_adminpass = self.get_config("node", "web.admin_pasword", None)
+        
+        if web_adminpass:
+             self.web_adminpass=web_adminpass
+
 
         from allmydata.webish import WebishServer
         nodeurl_path = os.path.join(self.basedir, "node.url")
