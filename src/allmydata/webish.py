@@ -129,7 +129,7 @@ class WebishServer(service.MultiService):
     name = "webish"
 
     def __init__(self, client, webport, nodeurl_path=None, staticdir=None,
-                 clock=None):
+                 clock=None,web_adminpass=None):
         service.MultiService.__init__(self)
         # the 'data' argument to all render() methods default to the Client
         # the 'clock' argument to root.Root is, if set, a
@@ -137,6 +137,8 @@ class WebishServer(service.MultiService):
         # so that they can test features that involve the passage of
         # time in a deterministic manner.
         self.root = root.Root(client, clock)
+        self.root.web_adminpass=web_adminpass
+
         self.buildServer(webport, nodeurl_path, staticdir)
         if self.root.child_operations:
             self.site.remember(self.root.child_operations, IOpHandleTable)

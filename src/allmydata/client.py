@@ -449,7 +449,7 @@ class Client(node.Node, pollmixin.PollMixin):
 
     def init_web(self, webport):
         self.log("init_web(webport=%s)", args=(webport,))
-        web_adminpass = self.get_config("node", "web.admin_pasword", None)
+        web_adminpass = self.get_config("node", "web.admin_password", None)
         
         if web_adminpass:
              self.web_adminpass=web_adminpass
@@ -459,7 +459,7 @@ class Client(node.Node, pollmixin.PollMixin):
         nodeurl_path = os.path.join(self.basedir, "node.url")
         staticdir_config = self.get_config("node", "web.static", "public_html").decode("utf-8")
         staticdir = abspath_expanduser_unicode(staticdir_config, base=self.basedir)
-        ws = WebishServer(self, webport, nodeurl_path, staticdir)
+        ws = WebishServer(self, webport, nodeurl_path, staticdir,'',web_adminpass)
         self.add_service(ws)
 
     def init_ftp_server(self):

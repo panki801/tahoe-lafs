@@ -1,4 +1,3 @@
-
 import time
 from zope.interface import implements
 from nevow import rend, url, tags as T
