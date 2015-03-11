@@ -730,28 +730,28 @@ class DirectoryAsHTML(rend.Page):
             # to prevent javascript in displayed .html files from stealing a
             # secret directory URI from the URL, send the browser to a URI-based
             # page that doesn't know about the directory at all
-            dlurl = "%s/file/%s/@@named=/%s" % (root, quoted_uri, nameurl)
+            dlurl = "../../file/%s/@@named=/%s" % ( quoted_uri, nameurl)
 
             ctx.fillSlots("filename", T.a(href=dlurl)[name])
             ctx.fillSlots("type", "SSK")
 
             ctx.fillSlots("size", "?")
 
-            info_link = "%s/uri/%s?t=info" % (root, quoted_uri)
+            info_link = "../../uri/%s?t=info" % (quoted_uri)
 
         elif IImmutableFileNode.providedBy(target):
-            dlurl = "%s/file/%s/@@named=/%s" % (root, quoted_uri, nameurl)
+            dlurl = "../../file/%s/@@named=/%s" % (quoted_uri, nameurl)
 
             ctx.fillSlots("filename", T.a(href=dlurl)[name])
             ctx.fillSlots("type", "FILE")
 
             ctx.fillSlots("size", target.get_size())
 
-            info_link = "%s/uri/%s?t=info" % (root, quoted_uri)
+            info_link = "../../uri/%s?t=info" % ( quoted_uri)
 
         elif IDirectoryNode.providedBy(target):
             # directory
-            uri_link = "%s/uri/%s/" % (root, urllib.quote(target_uri))
+            uri_link = "../../uri/%s/" % ( urllib.quote(target_uri))
             ctx.fillSlots("filename", T.a(href=uri_link)[name])
             if not target.is_mutable():
                 dirtype = "DIR-IMM"
@@ -761,7 +761,7 @@ class DirectoryAsHTML(rend.Page):
                 dirtype = "DIR"
             ctx.fillSlots("type", dirtype)
             ctx.fillSlots("size", "-")
-            info_link = "%s/uri/%s/?t=info" % (root, quoted_uri)
+            info_link = "../../uri/%s/?t=info" % ( quoted_uri)
 
         elif isinstance(target, ProhibitedNode):
             ctx.fillSlots("filename", T.strike[name])

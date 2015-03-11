@@ -5,6 +5,9 @@ from allmydata.web.common import getxmlfile, abbreviate_time, get_arg
 from allmydata.util.abbreviate import abbreviate_space
 from allmydata.util import time_format, idlib
 
+import login
+
+
 def remove_prefix(s, prefix):
     if not s.startswith(prefix):
         return None
@@ -93,6 +96,11 @@ class StorageStatus(rend.Page):
         return d
 
     def data_last_complete_bucket_count(self, ctx, data):
+        req=inevow.IRequest(ctx)
+        if(login.checkLogin(req.getSession(),ctx, 0)==False):
+            req.redirect('../../')
+
+
         s = self.storage.bucket_counter.get_state()
         count = s.get("last-complete-bucket-count")
         if count is None:

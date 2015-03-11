@@ -7,6 +7,7 @@ from nevow.inevow import IRequest
 from nevow.static import File as nevow_File # TODO: merge with static.File?
 from nevow.util import resource_filename
 
+import login
 import allmydata # to display import path
 from allmydata import get_package_versions_string
 from allmydata.util import log
@@ -99,6 +100,9 @@ class FileHandler(rend.Page):
 
     def childFactory(self, ctx, name):
         req = IRequest(ctx)
+        if(login.checkLogin(req.getSession(),ctx, 1)==False):
+            req.redirect('../../')
+
         if req.method not in ("GET", "HEAD"):
             raise WebError("/file can only be used with GET or HEAD")
         # 'name' must be a file URI
@@ -130,7 +134,7 @@ SPACE = u"\u00A0"*2
 class Root(rend.Page):
 
     addSlash = True
-    docFactory = getxmlfile("welcome.xhtml")
+    docFactory = getxmlfile("welcomeadmin.xhtml")
 
     _connectedalts = {
         "not-configured": "Not Configured",
@@ -173,6 +177,10 @@ class Root(rend.Page):
     def data_rendered_at(self, ctx, data):
         return time.strftime(TIME_FORMAT, time.localtime())
     def data_version(self, ctx, data):
+        req=IRequest(ctx)
+        if(login.checkLogin(req.getSession(),ctx, 0)==False):
+            req.redirect('../')
+
         return get_package_versions_string()
     def data_import_path(self, ctx, data):
         return str(allmydata)
@@ -181,6 +189,7 @@ class Root(rend.Page):
         return T.td(title=tubid_s)[self.client.get_long_nodeid()]
     def data_my_nickname(self, ctx, data):
         return self.client.nickname
+
 
     def render_services(self, ctx, data):
         ul = T.ul()

@@ -8,6 +8,7 @@ from allmydata.web.common import getxmlfile, get_arg, \
      abbreviate_time, abbreviate_rate, abbreviate_size, plural, compute_rate
 from allmydata.interfaces import IUploadStatus, IDownloadStatus, \
      IPublishStatus, IRetrieveStatus, IServermapUpdaterStatus
+import login
 
 class RateAndTimeMixin:
 
@@ -1051,6 +1052,7 @@ class Status(rend.Page):
 
     def json(self, req):
         req.setHeader("content-type", "text/plain")
+
         data = {}
         data["active"] = active = []
         for s in self._get_active_operations():
@@ -1088,6 +1090,9 @@ class Status(rend.Page):
                                )
 
     def data_active_operations(self, ctx, data):
+        req=inevow.IRequest(ctx)
+        if(login.checkLogin(req.getSession(),ctx, 0)==False):
+            req.redirect('../../')
         return self._get_active_operations()
 
     def _get_active_operations(self):
@@ -1161,6 +1166,7 @@ class Status(rend.Page):
         return ctx.tag
 
     def childFactory(self, ctx, name):
+        
         h = self.history
         stype,count_s = name.split("-")
         count = int(count_s)
@@ -1257,6 +1263,10 @@ class Statistics(rend.Page):
         return rend.Page.renderHTTP(self, ctx)
 
     def data_get_stats(self, ctx, data):
+        req=inevow.IRequest(ctx)
+        if(login.checkLogin(req.getSession(),ctx, 0)==False):
+            req.redirect('../../')
+
         return self.provider.get_stats()
 
     def render_load_average(self, ctx, data):

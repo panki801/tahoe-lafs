@@ -5,7 +5,7 @@ from twisted.internet import defer
 from nevow import appserver, inevow, static
 from allmydata.util import log, fileutil
 
-from allmydata.web import introweb, root
+from allmydata.web import introweb, login
 from allmydata.web.common import IOpHandleTable, MyExceptionHandler
 
 # we must override twisted.web.http.Request.requestReceived with a version
@@ -136,22 +136,22 @@ class WebishServer(service.MultiService):
         # twisted.internet.task.Clock that is provided by the unit tests
         # so that they can test features that involve the passage of
         # time in a deterministic manner.
-        self.root = root.Root(client, clock)
-        self.root.web_adminpass=web_adminpass
+        self.login = login.Login(client, clock, web_adminpass)
+
 
         self.buildServer(webport, nodeurl_path, staticdir)
-        if self.root.child_operations:
-            self.site.remember(self.root.child_operations, IOpHandleTable)
-            self.root.child_operations.setServiceParent(self)
+        if self.login.child_operations:
+            self.site.remember(self.login.child_operations, IOpHandleTable)
+            self.login.child_operations.setServiceParent(self)
 
     def buildServer(self, webport, nodeurl_path, staticdir):
         self.webport = webport
-        self.site = site = appserver.NevowSite(self.root)
+        self.site = site = appserver.NevowSite(self.login)
         self.site.requestFactory = MyRequest
         self.site.remember(MyExceptionHandler(), inevow.ICanHandleException)
         self.staticdir = staticdir # so tests can check
         if staticdir:
-            self.root.putChild("static", static.File(staticdir))
+            self.login.putChild("static", static.File(staticdir))
         if re.search(r'^\d', webport):
             webport = "tcp:"+webport # twisted warns about bare "0" or "3456"
         s = strports.service(webport, site)
