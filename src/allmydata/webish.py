@@ -8,6 +8,9 @@ from allmydata.util import log, fileutil
 from allmydata.web import introweb, login
 from allmydata.web.common import IOpHandleTable, MyExceptionHandler
 
+from allmydata.web import dbtahoe
+import os.path
+
 # we must override twisted.web.http.Request.requestReceived with a version
 # that doesn't use cgi.parse_multipart() . Since we actually use Nevow, we
 # override the nevow-specific subclass, nevow.appserver.NevowRequest . This
@@ -143,6 +146,11 @@ class WebishServer(service.MultiService):
         if self.login.child_operations:
             self.site.remember(self.login.child_operations, IOpHandleTable)
             self.login.child_operations.setServiceParent(self)
+
+        #create db for members, shareds for grid tahoe        
+        if(os.path.isfile('tahoe.db')==False):
+           dbtahoe.createDB()
+        
 
     def buildServer(self, webport, nodeurl_path, staticdir):
         self.webport = webport
