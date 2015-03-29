@@ -19,6 +19,24 @@ from allmydata.web.common import abbreviate_size, getxmlfile, WebError, \
 
 
 sessions={}
+class Logout(RenderMixin, rend.Page):
+    # I live at /uri . There are several operations defined on /uri itself,
+    # mostly involved with creation of unlinked files and directories.
+
+    def __init__(self, client):
+        rend.Page.__init__(self, client)
+        self.client = client
+
+    def render_GET(self, ctx):
+        req = IRequest(ctx)
+        sess=ISession(ctx)
+        sessions[sess]['logged']=0
+
+        there = url.URL.fromContext(ctx)
+        there = there.clear("../")
+
+        return there
+
 
 
 class URIHandler(RenderMixin, rend.Page):
@@ -171,11 +189,13 @@ class Login(rend.Page):
             s = None
     #    self.child_storage = storage.StorageStatus(s, self.client.nickname)
         self.child_uri = URIHandler(client,web_adminpass)
+        self.child_logout = Logout(client)
 
         self.child_cap = URIHandler(client,web_adminpass)
         self.session={}
      #   self.child_file = FileHandler(client)
         self.child_test=root.Root(client)
+
      #   self.child_named = FileHandler(client)
       #  self.child_status = status.Status(client.get_history())
       #  self.child_statistics = status.Statistics(client.stats_provider)
