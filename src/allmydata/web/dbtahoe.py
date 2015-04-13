@@ -13,11 +13,13 @@ def createDB():
 
    db.close()
 
-def add_member():
-   pass
-
-def del_member():
-   pass
+def add_member(login,password):
+   db=sqlite3.connect('tahoe.db')
+   db.execute("insert into members(login,password) values('"+login+"','"+password+"'");
+def del_member(login):
+   
+   db=sqlite3.connect('tahoe.db')
+   db.execute("delete members where login='"+login+"'");
 
 def add_contacts():
    pass

@@ -12,12 +12,14 @@ from allmydata import get_package_versions_string
 from allmydata.util import log
 from allmydata.interfaces import IFileNode
 from allmydata.web import filenode, directory, unlinked, status, operations
-from allmydata.web import storage,root
+from allmydata.web import storage
 from allmydata.web.common import abbreviate_size, getxmlfile, WebError, \
      get_arg, RenderMixin, get_format, get_mutable_type, TIME_FORMAT
 
+import dbtahoe,login
 
-class Login(rend.Page):
+
+class Members(rend.Page):
 
     addSlash = True
 
@@ -38,13 +40,7 @@ class Login(rend.Page):
         except KeyError:
             s = None
     #    self.child_storage = storage.StorageStatus(s, self.client.nickname)
-        self.child_uri = URIHandler(client,web_adminpass)
-
-        self.child_cap = URIHandler(client,web_adminpass)
-        self.session={}
-     #   self.child_file = FileHandler(client)
-        self.child_test=root.Root(client)
-     #   self.child_named = FileHandler(client)
+    #   self.child_named = FileHandler(client)
       #  self.child_status = status.Status(client.get_history())
       #  self.child_statistics = status.Statistics(client.stats_provider)
         static_dir = resource_filename("allmydata.web", "static")
@@ -57,6 +53,9 @@ class Login(rend.Page):
         return time.strftime(TIME_FORMAT, time.localtime())
 
     def data_version(self, ctx, data):
+        req=IRequest(ctx)
+        if(login.checkLogin(req.getSession(),ctx, 0)==False):
+            req.redirect('../')
         return get_package_versions_string()
 
     def data_import_path(self, ctx, data):

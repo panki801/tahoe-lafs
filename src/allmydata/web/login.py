@@ -32,9 +32,9 @@ class Logout(RenderMixin, rend.Page):
         sess=ISession(ctx)
         sessions[sess]['logged']=0
 
-        there = url.URL.fromContext(ctx)
-        there = there.clear("../")
-
+        there = url.URL.fromContext(ctx).parentdir()
+        there = there.child("")
+	
         return there
 
 
@@ -248,8 +248,10 @@ def checkLogin(session_id, ctx , group):
     except:
        logged=0
        user=''
-       return False
+       
     
 
-    if(user=='admin'):
+    if(user=='admin' and logged==1):
         return True
+    
+    return False	

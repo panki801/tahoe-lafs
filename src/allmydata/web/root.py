@@ -17,6 +17,7 @@ from allmydata.web import storage
 from allmydata.web.common import abbreviate_size, getxmlfile, WebError, \
      get_arg, RenderMixin, get_format, get_mutable_type, TIME_FORMAT
 
+import members
 
 class URIHandler(RenderMixin, rend.Page):
     # I live at /uri . There are several operations defined on /uri itself,
@@ -156,6 +157,7 @@ class Root(rend.Page):
 
         self.child_uri = URIHandler(client)
         self.child_cap = URIHandler(client)
+        self.child_members = members.Members(client)
 
         self.child_file = FileHandler(client)
         self.child_named = FileHandler(client)
