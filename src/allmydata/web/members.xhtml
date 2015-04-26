@@ -10,7 +10,7 @@
     <!-- Le styles -->
     <link href="/css/bootstrap.css" rel="stylesheet"/>
     <link href="/css/new-tahoe.css" rel="stylesheet"/>
-
+   <script type="text/javascript" src="/tahoe.js"></script>
     <!-- Le fav and touch icons -->
     <link rel="shortcut icon" href="/icon.png" />
   </head>
@@ -39,31 +39,66 @@
 
 <div class="row-fluid">
    <div class="span3">
+   <div class="well sidebar-nav nav">
       <div class="nav-header">Add member</div>
-      
 
 	   <div class="nav-form">
+         
+         <form method='post' action='opr'>
+	       <label>
+	            Username
+	            <input name="username" />
+	            <input name="action" value="addmember" type="hidden" />
+	        </label>
+		    
+           <label>
+	            Full name
+	            <input name="fullname" />
+	         </label>
+	       <label>
+	            Place DIR
+	            <input name="DIR" />
+	         </label>
 
-	      <label>
-	         Username
-	         <input name="addmember_login" />
-	      </label>
-	      <label>
-	         Password
-	         <input name="addmember_password" />
-	      </label>
-	      <input type="submit" value="submit" />
-         </div>   
-	   </div>
+          <label>
+	            Password
+	            <input name="password" type="password" />
+	         </label>
+	       
+          <input type="submit" value="submit" />
+      
+         </form>
+         
+         
+         </div> <!-- nav form -->
+         </div> <!-- well -->
+	   </div> <!-- span3 -->
 
 
    <div class="span9">
       <h1>Members</h1>
       <table class="table table-striped">
          <tr>
-            <th>Username</th><th>Full name</th>
+            <th>Username</th><th>Full name</th><th>Place DIR</th><th>Last logon</th><th></th>
          </tr>
-
+         <tr n:render="members_row">
+         <td><n:slot name="username"/></td>
+        
+	 <td><n:slot name="full_name"/></td>
+       
+	 <td><a>
+    <n:attr name="href">../uri/<n:slot name="DIR"/></n:attr>
+    <n:attr name="target">_blank</n:attr>
+    <img>
+    <n:attr name="src">img/clipboard.png</n:attr>
+    <n:attr name="title"><n:slot name="DIR"/></n:attr></img>
+    </a>
+    </td>
+	 <td><n:slot name="last_logon"/></td>
+    <td></td>
+        
+</tr>
+	<tr n:pattern="empty"><td colspan="3">No available members</td></tr>
       </table>
 
 

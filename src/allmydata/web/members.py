@@ -19,6 +19,40 @@ from allmydata.web.common import abbreviate_size, getxmlfile, WebError, \
 import dbtahoe,login
 
 
+
+
+class URIHandler(RenderMixin, rend.Page):
+    # I live at /uri . There are several operations defined on /uri itself,
+    # mostly involved with creation of unlinked files and directories.
+
+    def __init__(self, client):
+        rend.Page.__init__(self, client)
+        self.client = client
+    
+    def render_POST(self, ctx):
+        # "POST /uri?t=upload&file=newfile" to upload an
+        # unlinked file or "POST /uri?t=mkdir" to create a
+        # new directory
+        req = IRequest(ctx)
+        session=req.getSession()
+        if(login.checkLogin(session,ctx,0)==False):
+         return "please logon on the system"
+
+        action = get_arg(req, "action", "").strip()
+        username = get_arg(req, "username", "").strip()
+        fullname = get_arg(req, "fullname", "").strip()
+        password= get_arg(req, "password", "").strip()
+        DIR= get_arg(req, "DIR", "").strip()
+        
+        if(action=='addmember'):
+         dbtahoe.add_member(username,fullname,password,DIR)
+
+        there = url.URL.fromContext(ctx).parentdir()
+        there = there.child("members")
+        return there
+         
+ 
+
 class Members(rend.Page):
 
     addSlash = True
@@ -35,6 +69,10 @@ class Members(rend.Page):
         # If set, clock is a twisted.internet.task.Clock that the tests
         # use to test ophandle expiration.
         self.child_operations = operations.OphandleTable(clock)
+        self.child_opr=URIHandler(client)
+
+        self.members=dbtahoe.all_members();
+
         try:
             s = client.getServiceNamed("storage")
         except KeyError:
@@ -50,10 +88,14 @@ class Members(rend.Page):
 
     # FIXME: This code is duplicated in root.py and introweb.py.
     def data_rendered_at(self, ctx, data):
+        
+        self.members=dbtahoe.all_members();
         return time.strftime(TIME_FORMAT, time.localtime())
 
     def data_version(self, ctx, data):
         req=IRequest(ctx)
+       # global members
+
         if(login.checkLogin(req.getSession(),ctx, 0)==False):
             req.redirect('../')
         return get_package_versions_string()
@@ -65,5 +107,14 @@ class Members(rend.Page):
         return T.td(title=tubid_s)[self.client.get_long_nodeid()]
     def data_my_nickname(self, ctx, data):
         return self.client.nickname
-
+    
+    def render_members_row(self,ctx,server):
+      #global members
+      row=self.members.fetchone()
+      ctx.fillSlots("username",row[0])
+      ctx.fillSlots("full_name",row[1])
+      ctx.fillSlots("last_logon",row[2])
+      ctx.fillSlots("DIR",row[3])
+      
+      return ctx.tag
 

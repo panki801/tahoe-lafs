@@ -1,7 +1,7 @@
 import sqlite3,os
 
 sql=['CREATE TABLE "contacts" ("id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , "name" TEXT, "mail" TEXT, "note" TEXT, "keydir" TEXT, "member_id" INTEGER);',
-'CREATE TABLE "members" ("id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , "login" TEXT, "password" TEXT, "last_logon" DATETIME);',
+'CREATE TABLE "members" ("id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , "username" TEXT, "password" TEXT, "full_name" TEXT,"last_logon" DATETIME,"DIR" TEXT);',
 'CREATE TABLE "shared" ("id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , "name" TEXT, "keydir" TEXT, "type" BOOL,"member_id" INTEGER);']
 
 
@@ -13,9 +13,19 @@ def createDB():
 
    db.close()
 
-def add_member(login,password):
+def all_members():
    db=sqlite3.connect('tahoe.db')
-   db.execute("insert into members(login,password) values('"+login+"','"+password+"'");
+   return db.execute('select username,full_name,last_logon,DIR from members')
+  
+
+
+
+def add_member(login,full_name,password,DIR):
+   db=sqlite3.connect('tahoe.db')
+   db.execute("insert into members(username,full_name,password,DIR) values('"+login+"','"+full_name+"',"+"'"+password+"','"+DIR+"')")
+   db.commit()
+   return 0
+
 def del_member(login):
    
    db=sqlite3.connect('tahoe.db')
@@ -50,4 +60,5 @@ def modify_place():
 
 def modify_share():
    pass
+
 
