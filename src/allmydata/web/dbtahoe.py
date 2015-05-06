@@ -1,35 +1,28 @@
 import sqlite3,os
 
-sql=['CREATE TABLE "contacts" ("id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , "name" TEXT, "mail" TEXT, "note" TEXT, "keydir" TEXT, "member_id" INTEGER);',
-'CREATE TABLE "members" ("id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , "username" TEXT, "password" TEXT, "full_name" TEXT,"last_logon" DATETIME,"DIR" TEXT);',
-'CREATE TABLE "shared" ("id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , "name" TEXT, "keydir" TEXT, "type" BOOL,"member_id" INTEGER);']
+sql=[
+'CREATE TABLE "members" ("id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , "username" TEXT UNIQUE, "password" TEXT, "full_name" TEXT,"last_logon" DATETIME,"encrypted" TEXT,"DIR" TEXT);',
+'CREATE TABLE "shared" ("id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , "name" TEXT, "key" TEXT, "member_id" INTEGER, "password" TEXT, add_directory BOOL, upload_file BOOL);']
 
+
+db=sqlite3.connect('tahoe.db')
 
 def createDB():
-
-   db=sqlite3.connect('tahoe.db')
    for line in sql:
       db.execute(line)
 
-   db.close()
-
 def all_members():
-   db=sqlite3.connect('tahoe.db')
    return db.execute('select username,full_name,last_logon,DIR from members')
-  
-
-
 
 def add_member(login,full_name,password,DIR):
-   db=sqlite3.connect('tahoe.db')
    db.execute("insert into members(username,full_name,password,DIR) values('"+login+"','"+full_name+"',"+"'"+password+"','"+DIR+"')")
    db.commit()
-   return 0
+   return True
 
 def del_member(login):
    
-   db=sqlite3.connect('tahoe.db')
    db.execute("delete members where login='"+login+"'");
+   return True
 
 def add_contacts():
    pass
@@ -61,4 +54,17 @@ def modify_place():
 def modify_share():
    pass
 
+def checkMembers(username,password):
+   
+   #db=sqlite3.connect('tahoe.db')
+   query=db.execute("select username,full_name from members where username='"+username+"' and password='"+password+"'")
+   F=query.fetchone()
+   if(F != None):
+      return F
+
+   return False
+
+def getDir(username):
+   query=db.execute("select DIR from members where username='"+username+"'")
+   return query.fetchone
 

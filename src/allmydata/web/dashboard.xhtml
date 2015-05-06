@@ -23,37 +23,38 @@
           <a class="brand" href="/"><img src="/img/logo.png" alt="Tahoe-LAFS"/></a>
           <table class="node-info pull-right">
             <tr>
-             <!-- <th>Nickname:</th>
-              <td n:render="data" n:data="my_nickname" /> -->
+              <td><div class="logout"><a href="../logout">Logout</a></div></td>
             </tr>
             <tr>
-             <!-- <th>Node ID:</th>
-             <td n:render="my_nodeid" /> -->
             </tr>
           </table>
         </div>
       </div>
-    </div>
 
-    <div class="container-fluid">
-	<form method="post" action="uri" enctype="multipart/form-data">
+   <div class="row-fluid">
+      <div class="span3">  
+   
+      <button class="btn btn-default">Create</button>
+   
+   
+      </div> <!-- span3 -->
+      <div class="span9">
+   
+  <table class="table table-striped" n:data="getDirectory">
+     <tr>
+     <th>Name</th>
+     <th>Size</th>
+     <th>Modify</th>
+     </tr>
+  </table>
+   
+   
+      </div> <!-- span9 -->
 
-	<table>
-	<tr>
-		<td>Login</td><td><input name="login" /></td>
-	</tr>
-<tr>
-		<td>Password</td><td><input name="password" type="password" /></td>
-	</tr>
-	<tr>
-		<td><input value="submit" type="submit" /></td>
-	</tr>
 
-</table>
+   </div>
 
-</form>
-
-
+    
       <hr/>
 
       <footer>

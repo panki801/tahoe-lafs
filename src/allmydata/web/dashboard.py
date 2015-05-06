@@ -37,27 +37,16 @@ class URIHandler(RenderMixin, rend.Page):
         session=req.getSession()
         if(login.checkLogin(session,ctx,0)==False):
          return "please logon on the system"
-
-        action = get_arg(req, "action", "").strip()
-        username = get_arg(req, "username", "").strip()
-        fullname = get_arg(req, "fullname", "").strip()
-        password= get_arg(req, "password", "").strip()
-        DIR= get_arg(req, "DIR", "").strip()
         
-        if(action=='addmember'):
-         dbtahoe.add_member(username,fullname,password,DIR)
-
-        there = url.URL.fromContext(ctx).parentdir()
-        there = there.child("members")
         return there
          
  
 
-class Members(rend.Page):
+class Dashboard(rend.Page):
 
     addSlash = True
 
-    docFactory = getxmlfile("members.xhtml")
+    docFactory = getxmlfile("dashboard.xhtml")
 
     #def createSession(self, ctx):
     #   self.session=ISession(ctx)
@@ -96,7 +85,7 @@ class Members(rend.Page):
         req=IRequest(ctx)
        # global members
 
-        if(login.checkLogin(req.getSession(),ctx, 0)==False):
+        if(login.checkLogin(req.getSession(),ctx, 1)==False):
             req.redirect('../')
         return get_package_versions_string()
 
@@ -108,13 +97,9 @@ class Members(rend.Page):
     def data_my_nickname(self, ctx, data):
         return self.client.nickname
     
-    def render_members_row(self,ctx,server):
-      #global members
-      row=self.members.fetchone()
-      ctx.fillSlots("username",row[0])
-      ctx.fillSlots("full_name",row[1])
-      ctx.fillSlots("last_logon",row[2])
-      ctx.fillSlots("DIR",row[3])
-      
-      return ctx.tag
+    def data_getDirectory(self,ctx, data):
+        req=IRequest(ctx)
+	username=sesions[req.Isesions]['user']
+       	T=dbtahoe.getDirectory(username)
 
+	return ctx.tag

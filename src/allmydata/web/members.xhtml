@@ -77,11 +77,11 @@
 
    <div class="span9">
       <h1>Members</h1>
-      <table class="table table-striped">
-         <tr>
+      <table class="table table-striped" n:data="members" n:render="sequence">
+         <tr n:pattern="header">
             <th>Username</th><th>Full name</th><th>Place DIR</th><th>Last logon</th><th></th>
          </tr>
-         <tr n:render="members_row">
+         <tr n:pattern="item" n:render="members_row">
          <td><n:slot name="username"/></td>
         
 	 <td><n:slot name="full_name"/></td>

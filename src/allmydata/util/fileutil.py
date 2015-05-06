@@ -310,7 +310,7 @@ def abspath_expanduser_unicode(path, base=None):
     corresponding to an absolute path as returned by a previous call to
     abspath_expanduser_unicode.
     """
-    if not isinstance(path, unicode):
+    if not isinstance(path.decode(), unicode):
         raise AssertionError("paths must be Unicode strings")
     if base is not None:
         precondition_abspath(base)

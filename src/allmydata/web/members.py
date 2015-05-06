@@ -70,8 +70,11 @@ class Members(rend.Page):
         # use to test ophandle expiration.
         self.child_operations = operations.OphandleTable(clock)
         self.child_opr=URIHandler(client)
-
-        self.members=dbtahoe.all_members();
+        try:
+            self.members=dbtahoe.all_members()
+        except:
+            dbtahoe.createDB()
+            self.members=dbtahoe.all_members()
 
         try:
             s = client.getServiceNamed("storage")
@@ -108,13 +111,19 @@ class Members(rend.Page):
     def data_my_nickname(self, ctx, data):
         return self.client.nickname
     
-    def render_members_row(self,ctx,server):
-      #global members
-      row=self.members.fetchone()
-      ctx.fillSlots("username",row[0])
-      ctx.fillSlots("full_name",row[1])
-      ctx.fillSlots("last_logon",row[2])
-      ctx.fillSlots("DIR",row[3])
+    def data_members(self,ctx,data):
+      return self.members.fetchall()
+
+    def render_members_row(self,ctx, data):
+
+      ctx.fillSlots("username",data[0])
+      ctx.fillSlots("full_name",data[1])
+      D="N/A"
+      if(data[2]!=None):
+         D=data[2]
+
+      ctx.fillSlots("last_logon",D)
+      ctx.fillSlots("DIR",data[3])
       
       return ctx.tag
 

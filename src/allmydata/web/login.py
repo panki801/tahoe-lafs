@@ -16,7 +16,7 @@ from allmydata.web import storage,root
 from allmydata.web.common import abbreviate_size, getxmlfile, WebError, \
      get_arg, RenderMixin, get_format, get_mutable_type, TIME_FORMAT
 
-
+import dbtahoe,dashboard
 
 sessions={}
 class Logout(RenderMixin, rend.Page):
@@ -31,6 +31,7 @@ class Logout(RenderMixin, rend.Page):
         req = IRequest(ctx)
         sess=ISession(ctx)
         sessions[sess]['logged']=0
+        sessions[sess]['user']=''
 
         there = url.URL.fromContext(ctx).parentdir()
         there = there.child("")
@@ -98,6 +99,15 @@ class URIHandler(RenderMixin, rend.Page):
 
 
         if(self.session[w]['logged']==0):
+            if(dbtahoe.checkMembers(login,password)):
+             self.session[w]['user']=login
+             self.session[w]['logged']=1
+             req.redirect('dashboard')
+             there=url.URL.fromContext(ctx).parentdir()
+             there=there.clear()
+             there=there.child("dashboard")
+
+            
             if(login=='admin' and password==self.web_adminpass):
                 self.session[w]['user']='admin'
                 self.session[w]['logged']=1
@@ -195,6 +205,7 @@ class Login(rend.Page):
         self.session={}
      #   self.child_file = FileHandler(client)
         self.child_test=root.Root(client)
+        self.child_dashboard=dashboard.Dashboard(client)
 
      #   self.child_named = FileHandler(client)
       #  self.child_status = status.Status(client.get_history())
@@ -224,7 +235,14 @@ class Login(rend.Page):
 
         req=IRequest(ctx)
     #    self.webadmin=root.Root(self.client)
-        #req.redirect('welcomeadmin')
+        try:
+         if(checkLogin(session,ctx,0)==True):
+          req.redirect('test')
+        except:
+          pass
+        #if(==True):
+        # pass
+
         return get_package_versions_string()
 
     def data_import_path(self, ctx, data):

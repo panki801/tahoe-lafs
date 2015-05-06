@@ -77,3 +77,15 @@ body {
     float: left;
     margin: 5px;
 }
+div.logout{
+ 
+ background-color: orange;
+ border-radius: 10px;
+ border:2px solid red;
+ width: 80px;
+ text-align: center;
+}
+div a:hover{
+text-decoration: none;
+
+}
